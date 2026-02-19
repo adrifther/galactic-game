@@ -32,4 +32,19 @@ app.UseHttpsRedirection();
 // Map your endpoints (placeholder)
 app.MapGet("/", () => "Galactic Game API running!");
 
+// ✅ Endpoint temporal para probar conexión PostgreSQL
+app.MapGet("/test-db", async (GalacticGameDbContext db) =>
+{
+    try
+    {
+        await db.Database.OpenConnectionAsync();
+        await db.Database.CloseConnectionAsync();
+        return Results.Ok("✅ Conexión a la base de datos correcta!");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"❌ Error de conexión: {ex.Message}");
+    }
+});
+
 app.Run();
