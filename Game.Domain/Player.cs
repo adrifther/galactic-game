@@ -1,0 +1,10 @@
+﻿namespace Game.Domain
+{
+    public class Player
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+}
