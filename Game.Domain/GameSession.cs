@@ -1,22 +1,28 @@
-namespace Game.Domain
+using System;
+using Game.Domain.Common;
+using Game.Domain.Entities;
+
+namespace Game.Domain;
+
+public class GameSession : BaseEntity
 {
-    public enum GameMode
-    {
-        PvP,
-        PvE
-    }
+    public GameMode Mode { get; private set; }
 
-    public class GameSession
-    {
-        public int Id { get; set; }
-        public GameMode Mode { get; set; }
-        public int Player1Id { get; set; }
-        public int? Player2Id { get; set; } // null si es PvE
-        public DateTime StartedAt { get; set; } = DateTime.UtcNow;
-        public bool Finished { get; set; } = false;
+    public Guid Player1Id { get; private set; }
+    public Guid? Player2Id { get; private set; }
 
-        // Relaciones
-        public Player Player1 { get; set; } = null!;
-        public Player? Player2 { get; set; }
+    public DateTime StartedAt { get; private set; } = DateTime.UtcNow;
+    public bool Finished { get; private set; }
+
+    public Player Player1 { get; private set; } = null!;
+    public Player? Player2 { get; private set; }
+
+    protected GameSession() { }
+
+    public GameSession(GameMode mode, Guid player1Id, Guid? player2Id = null)
+    {
+        Mode = mode;
+        Player1Id = player1Id;
+        Player2Id = player2Id;
     }
 }

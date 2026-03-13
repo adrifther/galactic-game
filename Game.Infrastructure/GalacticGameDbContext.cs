@@ -1,4 +1,5 @@
-﻿using Game.Domain;
+using Game.Domain;
+using Game.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Game.Infrastructure
@@ -8,8 +9,19 @@ namespace Game.Infrastructure
         public GalacticGameDbContext(DbContextOptions<GalacticGameDbContext> options)
             : base(options) { }
 
-        public DbSet<Player> Players { get; set; } = null!;
-        public DbSet<GameSession> GameSessions { get; set; } = null!;
-        public DbSet<Score> Scores { get; set; } = null!;
+        protected GalacticGameDbContext() { }
+
+        public DbSet<Player> Players => Set<Player>();
+        public DbSet<GameSession> GameSessions => Set<GameSession>();
+        public DbSet<Score> Scores => Set<Score>();
+        public DbSet<Planet> Planets => Set<Planet>();
+        public DbSet<Spaceship> Spaceships => Set<Spaceship>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(GalacticGameDbContext).Assembly);
+        }
     }
 }

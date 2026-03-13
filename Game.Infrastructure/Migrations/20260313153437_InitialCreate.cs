@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -13,14 +12,25 @@ namespace Game.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Planets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ResourceValue = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Planets", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Players",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Credits = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,11 +41,10 @@ namespace Game.Infrastructure.Migrations
                 name: "GameSessions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Mode = table.Column<int>(type: "integer", nullable: false),
-                    Player1Id = table.Column<int>(type: "integer", nullable: false),
-                    Player2Id = table.Column<int>(type: "integer", nullable: true),
+                    Player1Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Player2Id = table.Column<Guid>(type: "uuid", nullable: true),
                     StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Finished = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -56,13 +65,33 @@ namespace Game.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Spaceships",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    AttackPower = table.Column<int>(type: "integer", nullable: false),
+                    DefensePower = table.Column<int>(type: "integer", nullable: false),
+                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Spaceships", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Spaceships_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Scores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PlayerId = table.Column<int>(type: "integer", nullable: false),
-                    GameSessionId = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameSessionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Points = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -102,13 +131,24 @@ namespace Game.Infrastructure.Migrations
                 name: "IX_Scores_PlayerId",
                 table: "Scores",
                 column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Spaceships_PlayerId",
+                table: "Spaceships",
+                column: "PlayerId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Planets");
+
+            migrationBuilder.DropTable(
                 name: "Scores");
+
+            migrationBuilder.DropTable(
+                name: "Spaceships");
 
             migrationBuilder.DropTable(
                 name: "GameSessions");
