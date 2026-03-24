@@ -8,5 +8,6 @@ namespace Game.Application.Services;
 public interface IPlayerService
 {
     Task<PlayerDto> RegisterAsync(RegisterPlayerDto dto, CancellationToken cancellationToken = default);
+    Task<PlayerDto> LoginAsync(LoginPlayerDto dto, CancellationToken cancellationToken = default);
     Task<PlayerDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

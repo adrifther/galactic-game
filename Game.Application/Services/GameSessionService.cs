@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.DTOs;
 using Game.Domain;
+using Game.Domain.Entities;
 using Game.Domain.Repositories;
 
 namespace Game.Application.Services;

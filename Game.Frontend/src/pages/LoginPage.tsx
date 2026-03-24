@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../api/api";
 
 
 
@@ -15,17 +16,15 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:5173/api/auth/login", {
+      const data = await apiFetch("http://localhost:5279/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
   
-      if (!response.ok) {
+      if (!data || !data.token) {
         throw new Error("Login failed");
       }
-  
-      const data = await response.json();
   
       login(data.token);
   

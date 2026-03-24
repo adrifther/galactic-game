@@ -1,5 +1,6 @@
 using Game.Domain.Common;
 
+
 namespace Game.Domain.Repositories;
 
 public interface IRepository<T> where T : BaseEntity

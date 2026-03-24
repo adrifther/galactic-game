@@ -16,4 +16,9 @@ public class PlayerRepository : Repository<Player>, IPlayerRepository
     {
         return await _context.Players.FirstOrDefaultAsync(p => p.Username == username, cancellationToken);
     }
+
+    public async Task<Player?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await _context.Players.FirstOrDefaultAsync(p => p.Email == email, cancellationToken);
+    }
 }

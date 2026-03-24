@@ -1,5 +1,5 @@
 namespace Game.Domain.Common;
-using Game.Domain; // o donde esté BaseEntity
+using Game.Domain.Entities; // o donde esté BaseEntity
 
 public abstract class BaseEntity
 {

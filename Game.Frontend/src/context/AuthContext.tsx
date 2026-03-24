@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { apiFetch } from "../api/api";
 
 type User = {
   email: string;
@@ -21,18 +22,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+
+    const validateToken = async () => {
+      try {
+        const data = await apiFetch("http://localhost:5279/api/auth/me");
+  
+        setUser({
+          email: data.email,
+          username: data.username
+        });
+  
+        setToken(localStorage.getItem("token"));
+  
+      } catch {
+        logout();
+      }
+    };
+  
     const storedToken = localStorage.getItem("token");
-
+  
     if (storedToken) {
-      const decoded: any = jwtDecode(storedToken);
-
-      setUser({
-        email: decoded.email,
-        username: decoded.username
-      });
-
-      setToken(storedToken);
+      validateToken();
     }
+  
   }, []);
 
   const login = (token: string) => {
