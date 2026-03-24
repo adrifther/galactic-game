@@ -1,7 +1,17 @@
 {
+  "compilerOptions": {
+    "jsx": "react-jsx", // Use "react" if you are using React 16 or earlier
+    "strict": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  
 }
