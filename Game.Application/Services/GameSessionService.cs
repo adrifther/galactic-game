@@ -11,17 +11,53 @@ namespace Game.Application.Services;
 public class GameSessionService : IGameSessionService
 {
     private readonly IRepository<GameSession> _sessionRepository;
+    private readonly IAIService _ai;
+    private readonly IMemoryService _memory;
 
-    public GameSessionService(IRepository<GameSession> sessionRepository)
+    public GameSessionService(IRepository<GameSession> sessionRepository, IAIService ai, IMemoryService memory)
     {
         _sessionRepository = sessionRepository;
+        _ai = ai;
+        _memory = memory;
+    }
+    
+    public async Task HandlePlanetAttack(string player, string planet)
+    {
+        var detail = $"{player} attacked {planet}";
+        
+        // ⚡ no bloquea el juego
+        _ = Task.Run(async () => await _ai.GetEmbedding(detail));
+
+        // 1. Guardar en el histórico "tradicional" (SQL)
+        /* To Do: Add Attack Entry logic when entity is defined
+        var attackLog = new AttackEntry { 
+            Player = player, 
+            Target = planet, 
+            Timestamp = DateTime.UtcNow 
+        };
+
+        await _sessionRepository.SaveAttackAsync(attackLog);
+        */
+
+        // 2. Enviar a la IA para telemetría o procesamiento posterior
+        await _ai.SendGameEventAsync(detail);
+
+        // 3. (Opcional) Si quieres que la IA te diga "qué tan agresivo" fue:
+        float[] embedding = await _ai.GetEmbedding(detail);
+        
+        // 4. Calcular el resultado del ataque
+        // var result = await _ai.CalculateAttackResultAsync(detail);
     }
 
     public async Task<GameSessionDto> StartSessionAsync(StartSessionDto dto, CancellationToken cancellationToken = default)
     {
         var session = new GameSession(dto.Mode, dto.Player1Id, dto.Player2Id);
+        
+        // Guardamos en Base de Datos
         await _sessionRepository.AddAsync(session, cancellationToken);
 
+        // Notificamos a la IA que empezó una sesión
+        await _ai.SendGameEventAsync($"New session started: {session.Id} in mode {dto.Mode}");
         return MapToDto(session);
     }
 
@@ -36,10 +72,6 @@ public class GameSessionService : IGameSessionService
         var session = await _sessionRepository.GetByIdAsync(id, cancellationToken);
         if (session == null) throw new InvalidOperationException("Session not found");
 
-        // Use reflection or a proper End() method on GameSession if available. For now, since Finished is private set, we might not be able to set it directly.
-        // I will assume Finished can be updated if we had a method, but since the domain doesn't have it, I'll ignore or wait for compilation.
-        // Actually, let's leave this as is - just mapping since Finished has private set. We will just save changes.
-        // Wait, without an End() method, we can't change Finished. I'll just leave it no-op or throw.
         throw new NotImplementedException("Domain logic missing for ending session.");
     }
 

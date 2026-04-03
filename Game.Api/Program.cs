@@ -48,6 +48,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
+//Registrar HttpClient de ai-model de python
+builder.Services.AddHttpClient("AI", client => {
+    client.BaseAddress = new Uri("http://localhost:8000/"); //http://tu-servicio-python.com/
+    });
+
 // Register your DbContext
 builder.Services.AddDbContext<GalacticGameDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -60,10 +65,15 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IGameSessionService, GameSessionService>();
 builder.Services.AddScoped<IScoreService, ScoreService>();
+builder.Services.AddScoped<IAIService, AIService>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
+
 
 var app = builder.Build();
 
