@@ -53,6 +53,11 @@ builder.Services.AddHttpClient("AI", client => {
     client.BaseAddress = new Uri("http://localhost:8000/"); //http://tu-servicio-python.com/
     });
 
+builder.Services.AddHttpClient("SWAPI", client =>
+{
+    client.BaseAddress = new Uri("https://swapi.dev/api/");
+});
+
 // Register your DbContext
 builder.Services.AddDbContext<GalacticGameDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -66,6 +71,8 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IGameSessionService, GameSessionService>();
 builder.Services.AddScoped<IScoreService, ScoreService>();
 builder.Services.AddScoped<IAIService, AIService>();
+builder.Services.AddScoped<IMemoryService, MemoryService>();
+builder.Services.AddScoped<IStarWarsDataService, StarWarsDataService>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();

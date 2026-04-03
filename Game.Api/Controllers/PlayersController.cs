@@ -38,4 +38,11 @@ public class PlayersController : ControllerBase
         if (player == null) return NotFound();
         return Ok(player);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var players = await _playerService.GetAllAsync();
+        return Ok(players);
+    }
 }

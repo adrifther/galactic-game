@@ -60,8 +60,9 @@ public class AuthController : ControllerBase
 
         var email = User.FindFirst("email")?.Value;
         var username = User.FindFirst("username")?.Value;
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        return Ok(new { email, username });
+        return Ok(new { id, email, username });
     }
 
     private string GenerateJwtToken(PlayerDto player)
